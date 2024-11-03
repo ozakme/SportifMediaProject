@@ -1,0 +1,248 @@
+﻿@model UserDto
+@{
+    ViewData["Title"] = "Detail";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Vertical Form</h4>
+        </div>
+        <div class="card-content">
+            <div class="card-body">
+                <form class="form form-vertical" id="UpdateUserForm">
+                    <input type="hidden" name="Id" value="@Model.Id">
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-12 d-flex justify-content-center">
+                                <div class="text-center">
+                                    @if (Model.ImagePath == "" && Model.Gender == "E")
+                                    {
+                                        <img src="https://localhost:44347/images/default.jpg" width="150" height="150" />
+                                    }
+                                    else if (Model.ImagePath == "" && Model.Gender == "K")
+                                    {
+                                        <img src="https://localhost:44347/images/defaultwoman.png" width="150" height="150" />
+                                    }
+                                    else if (Model.ImagePath == "" && Model.Gender == "B")
+                                    {
+                                        <img src="https://localhost:44347/images/defaultneuter.png" width="150" height="150" />
+                                    }
+                                    else
+                                    {
+                                        <img src="https://localhost:44347/@Model.ImagePath" width="150" height="150" />
+                                    }
+                                    <button type="button" class="btn btn-warning fw-bold rounded-1 mx-auto d-block mt-2" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                        Fotoğrafı Güncelle
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="email-id-vertical">Ad</label>
+                                    <input type="text" name="FirstName" value="@Model.FirstName" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="email-id-vertical">Soyad</label>
+                                    <input type="text" name="LastName" value="@Model.LastName" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="email-id-vertical">Email</label>
+                                    <input type="text" name="Email" value="@Model.Email" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="email-id-vertical">Telefon Numarası</label>
+                                    <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="email-id-vertical">Cinsiyet</label>
+                                    <select class="form-select" name="Gender" id="inputGroupSelect01">
+                                        <option selected>Cinsiyetiniz...</option>
+                                        @{
+                                            var genderOptions = new[]
+                                            {
+                                        new {Value="E",Text="Erkek"},
+                                        new {Value="K",Text="Kadın"},
+                                        new {Value="B",Text="Belirtmek İstemiyorum"}
+                                        };
+                                        }
+                                        @foreach (var option in genderOptions)
+                                        {
+                                            if (Model.Gender == option.Value)
+                                            {
+                                                <option value="@option.Value" selected>@option.Text</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@option.Value">@option.Text</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12 d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary me-1 mb-1">Güncelle</button>
+                                <a href="#" id="code" class="btn btn-secondary ms-3">Şifremi Değiştir</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Profil Fotoğrafını Güncelle</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="UpdateUserImageForm" enctype="multipart/form-data">
+                    <input type="hidden" name="Id" value="@Model.ImageId">
+                    <input type="hidden" name="UserId" value="@Model.Id">
+                    <div class="input-group mt-3 mb-3">
+                        <input type="file" name="ImagePath" class="form-control" id="inputGroupFile">
+                        <label class="input-group-text" for="inputGroupFile">Profil Fotoğrafı</label>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">İptal</button>
+                        <button type="submit" class="btn btn-success">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts {
+    <script>
+
+        $(document).ready(function () {
+
+            function Toast(message) {
+                Toastify({
+                    text: message,
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: "#4fbe87",
+                }).showToast()
+            }
+
+            $("#UpdateUserForm").on("submit", function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/User/UpdateUserInfo",
+                    data: $(this).serialize(),
+                    success: function (response) {
+
+                        Toast(response.message)
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 3000);
+
+                    }, error: function (xhr, status, error) {
+                        console.error("Ajax Error:", error);
+                    }
+                });
+            })
+
+            $("#UpdateUserImageForm").on("submit", function (e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                var fileInput = document.getElementById("inputGroupFile");
+                var file = fileInput.files[0];
+
+                if (!file) {
+                    alert("Lütfen önce bir dosya seçiniz");
+                    return;
+                }
+
+                if (!["image/jpeg", "image/jpg", "image/png"].includes(file.type)) {
+                    alert("Sadece jpeg,jpg veya png yüklenebilir");
+                    return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("Lütfen dosya boyutu 5MB ı geçmesin");
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/User/UpdateUserImage",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+
+                        Toast(response.message)
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 3000);
+
+                    }, error: function (xhr, status, error) {
+                        console.error("Ajax Error:", error);
+                    }
+                });
+            })
+
+            $("#code").on("click", function (e) {
+                e.preventDefault();
+                var UserId = @Model.Id;
+                var Email = "@ViewData["Email"]";
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/User/GetVerifyCode",
+                    data: {
+                        UserId: UserId,
+                        Email: Email
+                    },
+                    success: function (response) {
+                        if (response.success) {
+
+                            Toast(response.message)
+
+                            setTimeout(function () {
+                                window.location.href = response.url;
+                            }, 3000);
+                        }
+                    }, error: function (xhr, status, error) {
+                        console.log(error);
+                    }
+                })
+            })
+
+
+        })
+    </script>
+}

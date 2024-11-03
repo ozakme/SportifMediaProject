@@ -1,0 +1,113 @@
+﻿@model List<ArticleDetailDto>
+@{
+    ViewData["Title"] = "Index";
+    int UserId = ViewData["UserId"] != null ? Convert.ToInt32(ViewData["UserId"]) : -1;
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<div id="mainContent" class="col-12 col-md-8 p-3">
+    <div class="row mb-4">
+        @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+        {
+            <div class="col-12 border rounded-3 shadow p-3">
+                <form action="/share-content" method="post">
+                    <input type="hidden" value="@ViewData["UserId"]" name="UserId" />
+                    <input type="hidden" value="@DateTime.Now" name="SharingDate" />
+                    <div class="form-group mb-3">
+                        <label for="topic" class="d-block fw-bold">Bir Konu Seçiniz:</label>
+                        @await Component.InvokeAsync("_FormTopic")
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="summernote" class="d-block fw-bold">İçerik:</label>
+                        <textarea id="summernote" type="text" class="form-control" name="Content"></textarea>
+                    </div>
+                    <button class="btn btn-outline-success float-end mt-2" type="submit">Paylaş</button>
+                </form>
+            </div>
+        }
+        else
+        {
+            <p>Yalnızca adminler paylaşım yapabilir.</p>
+        }
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        foreach (var articleDetail in Model.OrderByDescending(x => x.Id))
+        {
+            <div class="row mb-3">
+                <div class="col-12 border rounded-3 shadow p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold"><i>#@articleDetail.TopicTitle</i></span>
+
+                        @if (UserId == articleDetail.UserId)
+                        {
+                            <div>
+                                <button type="button" class="btn-close float-end" data-article="@articleDetail.Id" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button>
+                                <button class="btn btn-outline-warning border-0 float-end me-2" data-article="@articleDetail.Id" data-bs-toggle="modal" data-bs-target="#articleUpdateModal"><i class="bi bi-pencil-square"></i></button>
+                            </div>
+                        }
+                    </div>
+
+                    @Html.Raw(articleDetail.Content)
+
+                    <div class="pt-3">
+                        <button class="btn btn-outline-secondary float-end">@articleDetail.SharingDate</button>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    @await Component.InvokeAsync("_RightSide")
+
+    <!-- Modal for Deleting Article -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">İçerik Siliniyor !</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/delete-article" method="post">
+                        <div class="input-group mt-3 mb-3">
+                            <input type="hidden" name="id" class="form-control" id="articleId">
+                            <span>Bu paylaşımı silmek istediğinize emin misiniz ?</span>
+                            <span>Bu işlemi geri alamazsınız !</span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">İptal</button>
+                            <button type="submit" class="btn btn-success">Eminim Sil</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Updating Article -->
+    <div class="modal fade" id="articleUpdateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="articleUpdateModalLabel1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="articleUpdateModalLabel1">Güncelleme İşlemi</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/update-article" method="post">
+                        <div class="input-group mt-3 mb-3">
+                            <input type="hidden" name="Id" id="updateArticleId">
+                            <label for="updateContent" class="form-label">İçerik:</label>
+                            <textarea id="updateContent" name="Content" class="form-control" rows="4"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">İptal</button>
+                            <button type="submit" class="btn btn-success">Güncelle</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

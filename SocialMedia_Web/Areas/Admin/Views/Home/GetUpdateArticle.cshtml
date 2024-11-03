@@ -1,0 +1,100 @@
+﻿@model ArticleTopicsResponse
+@{
+    ViewData["Title"] = "GetUpdateArticle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var title = "";
+}
+
+<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Paylaşım Güncelleme</h4>
+        </div>
+        <div class="card-content">
+            <div class="card-body">
+                <form class="form form-vertical" id="UpdateArticleForm">
+                    <input type="hidden" name="Id" value="@Model.Article.Id">
+                    <input type="hidden" name="UserId" value="@Model.Article.UserId">
+                    <input type="hidden" name="SharingDate" value="@DateTime.Now">
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="first-name-vertical">Konu Başlığı</label>
+                                    <select class="choices form-select" name="TopicId">
+
+                                        @foreach (var item in Model.Topics)
+                                        {
+                                            if (item.Id == Model.Article.TopicId)
+                                            {
+                                                <option value="@item.Id" selected>@item.TopicTitle</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.Id">@item.TopicTitle</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="email-id-vertical">İçerik</label>
+                                    <textarea class="form-control" id="summernote" name="Content" rows="10">@Html.Raw(Model.Article.Content)</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-12 d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary me-1 mb-1">Güncelle</button>
+                                <button type="reset"
+                                        class="btn btn-light-secondary me-1 mb-1">
+                                    İptal
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+
+        $(document).ready(function () {
+
+            function Toast(message) {
+                Toastify({
+                    text: message,
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: "#4fbe87",
+                }).showToast()
+            }
+
+            $("#UpdateArticleForm").on("submit", function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/Home/UpdateArticle",
+                    data: $(this).serialize(),
+                    success: function (response) {
+
+                        Toast(response.message)
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 3000);
+
+                    }, error: function (xhr, status, error) {
+                        console.error("Ajax Error:", error);
+                    }
+                });
+            })
+
+        })
+    </script>
+}

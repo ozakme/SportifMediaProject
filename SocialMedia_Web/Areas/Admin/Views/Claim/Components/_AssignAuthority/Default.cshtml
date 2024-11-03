@@ -1,0 +1,54 @@
+﻿@model (List<SportifMedia_Web.Models.OperationClaim> opaerationClaim,List<UserDto> userDto)
+<div class="modal fade modal-lg text-left" id="AssigningAuthority" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel33" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable"
+         role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel33">Yetki Atama Formu </h4>
+                <button type="button" class="close" data-bs-dismiss="modal"
+                        aria-label="Close">
+                    <i data-feather="x"></i>
+                </button>
+            </div>
+            <form id="userClaimAdd">
+                <div class="modal-body">
+                    <label for="email">Yetki Seçin : </label>
+                    <div class="form-group">
+
+                        <select class="form-select" name="OperationClaimId" id="addUserClaim">
+                            @foreach (var item in Model.opaerationClaim)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <label for="email">Kullanıcı Seçin : </label>
+                    <div class="form-group">
+
+                        <select class="form-select choices" name="UserId">
+                            @foreach (var item in Model.userDto)
+                            {
+                                <option value="@item.Id">@item.FirstName @item.LastName</option>
+                            }
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="reset" class="btn btn-light-secondary"
+                            data-bs-dismiss="modal">
+                        <i class="bx bx-x d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">İptal</span>
+                    </button>
+                    <button type="submit" class="btn btn-primary ms-1"
+                            data-bs-dismiss="modal">
+                        <i class="bx bx-check d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Yetki Ata</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,52 @@
+﻿@model List<SportifMedia_Web.Models.OperationClaim>
+
+<div class="modal fade modal-lg text-left" id="inlineForm" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel33" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+         role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel33">Yetki Güncelleme Formu </h4>
+                <button type="button" class="close" data-bs-dismiss="modal"
+                        aria-label="Close">
+                    <i data-feather="x"></i>
+                </button>
+            </div>
+            <form id="userClaimUpdate">
+                <input id="Id" type="hidden" name="Id" class="form-control">
+                <input id="UserId" type="hidden" name="UserId" class="form-control">
+                <div class="modal-body">
+                    <label for="claim">Yetki: </label>
+                    <div class="form-group">
+
+                        <select class="form-select" name="OperationClaimId" id="updateUserClaim">
+                            @foreach (var item in Model)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <label for="claim">Kullanıcı Adı: </label>
+                    <div class="form-group">
+
+                        <input id="userName" type="text" name="Name" class="form-control" readonly="true">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="reset" class="btn btn-light-secondary"
+                            data-bs-dismiss="modal">
+                        <i class="bx bx-x d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">İptal</span>
+                    </button>
+                    <button type="submit" class="btn btn-primary ms-1"
+                            data-bs-dismiss="modal">
+                        <i class="bx bx-check d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Güncelle</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
